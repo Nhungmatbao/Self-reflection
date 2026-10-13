@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today's Reflection</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #302b3b;
+      background: #f8f5fc;
+      line-height: 1.6;
+    }
+    header {
+      padding: 22px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eee7f5;
+    }
+    .logo { font-size: 21px; font-weight: bold; color: #7354a5; }
+    header a { color: #7354a5; text-decoration: none; }
+    main { max-width: 1050px; margin: 45px auto; padding: 0 20px; }
+    .hero {
+      padding: 42px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #eee5ff, #fff0e8);
+    }
+    .eyebrow { color: #8063aa; font-weight: bold; letter-spacing: 2px; font-size: 12px; }
+    h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.2; margin: 12px 0; }
+    .intro { max-width: 600px; color: #686073; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 24px; }
+    .card { background: white; border: 1px solid #eee7f5; border-radius: 18px; padding: 24px; }
+    .emoji { font-size: 28px; }
+    h2 { font-size: 20px; margin: 8px 0; }
+    button {
+      border: 0; border-radius: 12px; padding: 12px 18px;
+      background: #7354a5; color: white; font-size: 15px;
+      cursor: pointer; margin-top: 10px;
+    }
+    button:hover { background: #60418f; }
+    textarea, select {
+      width: 100%; padding: 12px; margin-top: 8px;
+      border: 1px solid #ddd3e9; border-radius: 10px;
+      font: inherit; background: white;
+    }
+    .quote { font-size: 19px; color: #5e4b77; }
+    .result { margin-top: 12px; color: #7354a5; white-space: pre-wrap; }
+    footer { text-align: center; padding: 25px; color: #81788d; font-size: 13px; }
+    @media (max-width: 600px) {
+      header { padding: 18px 20px; }
+      main { margin-top: 24px; }
+      .hero { padding: 25px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">☾ Today's Reflection</div>
+    <a href="#journal">Góc nhìn của mình</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">A MOMENT FOR YOURSELF</div>
+      <h1>Hôm nay,<br>mình thế nào?</h1>
+      <p class="intro">Dành vài phút lắng nghe bản thân, nhận diện cảm xúc và tìm một điều nhỏ bé để ngày hôm nay trở nên ý nghĩa hơn.</p>
+      <button onclick="document.getElementById('mood').scrollIntoView({behavior:'smooth'})">Bắt đầu nhìn lại →</button>
+    </section>
+
+    <section class="cards">
+      <article class="card">
+        <div class="emoji">🌤️</div>
+        <h2>Daily Reflection</h2>
+        <p class="quote" id="dailyQuote">Mỗi ngày không cần hoàn hảo. Chỉ cần bạn hiểu mình hơn một chút.</p>
+        <button onclick="newReflection()">Góc nhìn khác</button>
+      </article>
+
+      <article class="card" id="mood">
+        <div class="emoji">💜</div>
+        <h2>Check-in cảm xúc</h2>
+        <p>Ngay lúc này, bạn cảm thấy thế nào?</p>
+        <select id="moodChoice">
+          <option value="">Chọn cảm xúc của bạn</option>
+          <option>Vui vẻ</option>
+          <option>Bình yên</option>
+          <option>Biết ơn</option>
+          <option>Lo lắng</option>
+          <option>Mệt mỏi</option>
+          <option>Chưa rõ cảm xúc</option>
+        </select>
+        <button onclick="saveMood()">Ghi nhận cảm xúc</button>
+        <div class="result" id="moodResult"></div>
+      </article>
+
+      <article class="card" id="journal">
+        <div class="emoji">📖</div>
+        <h2>Nhật ký hôm nay</h2>
+        <p>Điều gì đang ở trong tâm trí bạn?</p>
+        <textarea id="journalText" rows="4" placeholder="Hôm nay mình đã..."></textarea>
+        <button onclick="saveJournal()">Lưu nhật ký trên thiết bị</button>
+        <div class="result" id="journalResult"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer>Today's Reflection · Một chút thấu hiểu, mỗi ngày một chút.</footer>
+
+  <script>
+    const reflections = [
+      "Mỗi ngày không cần hoàn hảo. Chỉ cần bạn hiểu mình hơn một chút.",
+      "Bạn không cần giải quyết mọi thứ trong hôm nay. Hãy bắt đầu từ điều nhỏ nhất.",
+      "Nghỉ ngơi cũng là một cách để tiến về phía trước.",
+      "Đừng quên dành cho bản thân sự dịu dàng mà bạn dành cho người khác.",
+      "Một ngày bình thường vẫn có thể chứa đựng những điều đáng trân trọng."
+    ];
+    function newReflection() {
+      const current = document.getElementById('dailyQuote').textContent;
+      let choices = reflections.filter(item => item !== current);
+      document.getElementById('dailyQuote').textContent =
+        choices[Math.floor(Math.random() * choices.length)];
+    }
+    function saveMood() {
+      const mood = document.getElementById('moodChoice').value;
+      if (!mood) {
+        document.getElementById('moodResult').textContent = 'Bạn hãy chọn một cảm xúc trước nhé.';
+        return;
+      }
+      localStorage.setItem('todaysReflectionMood', mood);
+      document.getElementById('moodResult').textContent = 'Đã ghi nhận: ' + mood + '. Cảm ơn bạn đã lắng nghe bản thân.';
+    }
+    function saveJournal() {
+      const entry = document.getElementById('journalText').value.trim();
+      if (!entry) {
+        document.getElementById('journalResult').textContent = 'Hãy viết vài dòng trước khi lưu nhé.';
+        return;
+      }
+      const entries = JSON.parse(localStorage.getItem('todaysReflectionJournal') || '[]');
+      entries.push({ date: new Date().toLocaleDateString('vi-VN'), text: entry });
+      localStorage.setItem('todaysReflectionJournal', JSON.stringify(entries));
+      document.getElementById('journalResult').textContent = 'Đã lưu trên trình duyệt của thiết bị này.';
+      document.getElementById('journalText').value = '';
+    }
+    document.getElementById('moodChoice').value = localStorage.getItem('todaysReflectionMood') || '';
+  </script>
+</body>
+</html>
